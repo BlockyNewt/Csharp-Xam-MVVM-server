@@ -29,3 +29,10 @@ C:\Users\S-03\source\repos\BlockyNewt\cca_p_mvvm_server\cca_p_mvvm_server\cca_p_
 C:\Users\S-03\source\repos\BlockyNewt\cca_p_mvvm_server\cca_p_mvvm_server\cca_p_mvvm_server\obj\Debug\cca_p_mvvm_server.csproj.CopyComplete
 C:\Users\S-03\source\repos\BlockyNewt\cca_p_mvvm_server\cca_p_mvvm_server\cca_p_mvvm_server\obj\Debug\cca_p_mvvm_server.exe
 C:\Users\S-03\source\repos\BlockyNewt\cca_p_mvvm_server\cca_p_mvvm_server\cca_p_mvvm_server\obj\Debug\cca_p_mvvm_server.pdb
+C:\Users\S-03\Source\Repos\BlockyNewt\cca_p_mvvm_server\cca_p_mvvm_server\cca_p_mvvm_server\bin\Debug\MailKit.dll
+C:\Users\S-03\Source\Repos\BlockyNewt\cca_p_mvvm_server\cca_p_mvvm_server\cca_p_mvvm_server\bin\Debug\MimeKit.dll
+C:\Users\S-03\Source\Repos\BlockyNewt\cca_p_mvvm_server\cca_p_mvvm_server\cca_p_mvvm_server\bin\Debug\BouncyCastle.Crypto.xml
+C:\Users\S-03\Source\Repos\BlockyNewt\cca_p_mvvm_server\cca_p_mvvm_server\cca_p_mvvm_server\bin\Debug\MailKit.pdb
+C:\Users\S-03\Source\Repos\BlockyNewt\cca_p_mvvm_server\cca_p_mvvm_server\cca_p_mvvm_server\bin\Debug\MailKit.xml
+C:\Users\S-03\Source\Repos\BlockyNewt\cca_p_mvvm_server\cca_p_mvvm_server\cca_p_mvvm_server\bin\Debug\MimeKit.pdb
+C:\Users\S-03\Source\Repos\BlockyNewt\cca_p_mvvm_server\cca_p_mvvm_server\cca_p_mvvm_server\bin\Debug\MimeKit.xml

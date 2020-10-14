@@ -18,7 +18,7 @@ namespace cca_p_mvvm_server
             int counter = 0;
 
             serverSocket.Start();
-            Console.WriteLine(" >> " + "Server Started");
+            Console.WriteLine(" >> " + "Server Started \n");
 
             counter = 0;
             while (true)
@@ -26,7 +26,7 @@ namespace cca_p_mvvm_server
                 counter += 1;
                 clientSocket = serverSocket.AcceptTcpClient();
 
-                Console.WriteLine(" >> " + "Client No:" + Convert.ToString(counter) + " started!");
+                Console.WriteLine(" >> " + "Client No:" + Convert.ToString(counter) + " started! \n");
                 HandleClient client = new HandleClient();
 
                 client.startClient(clientSocket, Convert.ToString(counter));

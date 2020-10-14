@@ -25,15 +25,15 @@ namespace cca_p_mvvm_server
 
             try
             {
-                Console.WriteLine("Connecting to MySQL...");
+                Console.WriteLine(" >> Connecting to MySQL...");
 
                 this.conn_.Open();
 
-                Console.Write("Connected to Database.\n\n");
+                Console.Write(" >> Connected to Database.\n\n");
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.ToString());
+                Console.WriteLine(" >> " + e.ToString());
             }
         }
 
@@ -59,7 +59,7 @@ namespace cca_p_mvvm_server
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.ToString());
+                Console.WriteLine(" >> " + e.ToString());
 
                 return string.Empty;
             }
@@ -75,12 +75,10 @@ namespace cca_p_mvvm_server
                 MySqlDataReader rdr = sqlCommand.ExecuteReader();
 
                 rdr.Close();
-
-                Console.WriteLine(">> Created new account.");
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.ToString());
+                Console.WriteLine(" >> " + e.ToString());
             }
         }
 
@@ -101,14 +99,12 @@ namespace cca_p_mvvm_server
 
                 rdr.Close();
 
-                //Console.WriteLine(userInfo + "\n");
-
                 return userInfo;
 
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.ToString());
+                Console.WriteLine(" >> " + e.ToString());
 
                 return string.Empty;
             }
@@ -132,13 +128,13 @@ namespace cca_p_mvvm_server
 
                 rdr.Close();
 
-                Console.WriteLine(allChannels + "\n");
+                Console.WriteLine(" >> " + allChannels + "\n");
 
                 return allChannels;
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.ToString());
+                Console.WriteLine(" >> " + e.ToString());
 
                 return string.Empty;
             }
@@ -162,13 +158,13 @@ namespace cca_p_mvvm_server
 
                 rdr.Close();
 
-                Console.WriteLine(allUsers + "\n");
+                Console.WriteLine(" >> " + allUsers + "\n");
 
                 return allUsers;
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.ToString());
+                Console.WriteLine(" >> " + e.ToString());
 
                 return string.Empty;
             }
@@ -203,7 +199,7 @@ namespace cca_p_mvvm_server
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.ToString());
+                Console.WriteLine(" >> " + e.ToString());
 
                 return string.Empty;
             }
@@ -219,15 +215,11 @@ namespace cca_p_mvvm_server
                 MySqlDataReader rdr = queryCommand.ExecuteReader();
 
                 string allDirectMessages = string.Empty;
-                Console.WriteLine("A");
-
 
                 while (rdr.Read())
                 {
                     allDirectMessages += rdr[0] + "," + rdr[1] + ";";
                 }
-
-                Console.WriteLine("B");
 
                 rdr.Close();
 
@@ -242,7 +234,7 @@ namespace cca_p_mvvm_server
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.ToString());
+                Console.WriteLine(" >> " + e.ToString());
                 return "EMPTY";
             }
         }
@@ -260,7 +252,7 @@ namespace cca_p_mvvm_server
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.ToString());
+                Console.WriteLine(" >> " + e.ToString());
             }
         }
 
@@ -277,7 +269,7 @@ namespace cca_p_mvvm_server
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.ToString());
+                Console.WriteLine(" >> " + e.ToString());
             }
         }
 
@@ -294,7 +286,7 @@ namespace cca_p_mvvm_server
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.ToString());
+                Console.WriteLine(" >> " + e.ToString());
             }
         }
 
