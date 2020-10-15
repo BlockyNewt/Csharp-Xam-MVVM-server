@@ -65,9 +65,9 @@ namespace cca_p_mvvm_server
             }
         }
 
-        public void CreateAccount(string firstname, string lastname, string username, string password, string profilePicture)
+        public void CreateAccount(string firstname, string lastname, string username, string password, string bio, string profilePicture)
         {
-            string query = "Insert into Users(First_Name_, Last_Name_, Username_, Password_, Picture_) values( '" + firstname + "', '" + lastname + "', '" + username + "', '" + password + "', '" + profilePicture + "');";
+            string query = "Insert into Users(First_Name_, Last_Name_, Username_, Password_, Bio_, Picture_) values( '" + firstname + "', '" + lastname + "', '" + username + "', '" + password + "', '" + bio + "', '" + profilePicture + "');";
 
             try
             {
@@ -84,7 +84,7 @@ namespace cca_p_mvvm_server
 
         public string GetUserInfo(string password)
         {
-            string query = "Select ID_, First_Name_, Last_Name_, Picture_ from users where Password_ = '" + password + "';";
+            string query = "Select ID_, First_Name_, Last_Name_, Bio_, Picture_ from users where Password_ = '" + password + "';";
 
             try
             {
@@ -94,7 +94,7 @@ namespace cca_p_mvvm_server
 
                 while (rdr.Read())
                 {
-                    userInfo = rdr[0].ToString() + ";" + rdr[1].ToString() + ";" + rdr[2].ToString() + ";" + rdr[3].ToString();
+                    userInfo = rdr[0].ToString() + ";" + rdr[1].ToString() + ";" + rdr[2].ToString() + ";" + rdr[3].ToString() + ";" + rdr[4].ToString();
                 }
 
                 rdr.Close();
@@ -142,7 +142,7 @@ namespace cca_p_mvvm_server
 
         public string GetAllUsers()
         {
-            string query = "Select ID_, First_Name_, Last_Name_, Picture_ from users;";
+            string query = "Select ID_, First_Name_, Last_Name_, Bio_, Picture_ from users;";
 
             try
             {
@@ -153,7 +153,7 @@ namespace cca_p_mvvm_server
 
                 while (rdr.Read())
                 {
-                    allUsers += rdr[0] + "," + rdr[1] + "," + rdr[2] + "," + rdr[3] + ";";
+                    allUsers += rdr[0] + "," + rdr[1] + "," + rdr[2] + "," + rdr[3] + "," + rdr[4] + ";";
                 }
 
                 rdr.Close();
@@ -241,7 +241,7 @@ namespace cca_p_mvvm_server
 
         public void EditUser(string[] edit)
         {
-            string query = "Update Users set First_Name_ = '" + edit[2] + "', Last_Name_ = '" + edit[3] + "', Picture_ = '" + edit[4] + "' where ID_ = " + edit[1] + ";";
+            string query = "Update Users set First_Name_ = '" + edit[2] + "', Last_Name_ = '" + edit[3] + "', Bio_ = '" + edit[4] + "', Picture_ = '" + edit[5] + "' where ID_ = " + edit[1] + ";";
 
             try
             {

@@ -97,11 +97,11 @@ namespace cca_p_mvvm_server
                 networkStream.Write(msg, 0, msg.Length);
                 networkStream.Flush();
             }
-            else if (dataFromClient.Contains("CREATE_ACCOUNT;"))
+            else if (dataFromClient.Contains("CREATE_ACCOUNT;"))    
             {
                 string[] words = dataFromClient.Split(';');
 
-                database.CreateAccount(words[1], words[2], words[3], words[4], words[5]);
+                database.CreateAccount(words[1], words[2], words[3], words[4], words[5], words[6]);
 
                 Console.WriteLine(" >> Created a new account.");
             }
