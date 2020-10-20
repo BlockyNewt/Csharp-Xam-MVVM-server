@@ -43,8 +43,10 @@ namespace cca_p_mvvm_server
                     //CHECKS TO SEE IF THE CLIENT DISCONNECTS
                     if (networkStream.Read(bytesFrom, 0, bytesFrom.Length) != 0)
                     {
-                        dataFromClient = System.Text.Encoding.ASCII.GetString(bytesFrom);
+                        dataFromClient = System.Text.Encoding.UTF8.GetString(bytesFrom);
                         dataFromClient = dataFromClient.Substring(0, dataFromClient.IndexOf("$"));
+
+                        Console.WriteLine(dataFromClient);
 
                         ServerCommands(dataFromClient, networkStream, sendBytes);
                     }
@@ -80,7 +82,7 @@ namespace cca_p_mvvm_server
                 string[] words = dataFromClient.Split(';');
                 string getPassword = database.SearchUser(words[1]);
 
-                Byte[] msg = System.Text.Encoding.ASCII.GetBytes(getPassword);
+                Byte[] msg = System.Text.Encoding.UTF8.GetBytes(getPassword);
 
                 Console.WriteLine(" >> Username: " + words[1]);
                 Console.WriteLine(" >> Password: " + getPassword + "\n");
@@ -93,7 +95,7 @@ namespace cca_p_mvvm_server
                 string[] words = dataFromClient.Split(';');
                 string getUserInfo = database.GetUserInfo(words[1]);
 
-                Byte[] msg = System.Text.Encoding.ASCII.GetBytes(getUserInfo);
+                Byte[] msg = System.Text.Encoding.UTF8.GetBytes(getUserInfo);
                 networkStream.Write(msg, 0, msg.Length);
                 networkStream.Flush();
             }
@@ -109,7 +111,7 @@ namespace cca_p_mvvm_server
             {
                 //GET ALL CHANNEL NAMES
                 string allChannels = database.GetChannels();
-                Byte[] msg = System.Text.Encoding.ASCII.GetBytes(allChannels);
+                Byte[] msg = System.Text.Encoding.UTF8.GetBytes(allChannels);
 
                 //SEND TO CLIENT 
                 networkStream.Write(msg, 0, msg.Length);
@@ -120,13 +122,14 @@ namespace cca_p_mvvm_server
                 //GET ALL USERS ID, NAME, LASTNAME, AND PICTURE
                 string allUsers = database.GetAllUsers();
 
-                Byte[] msg = System.Text.Encoding.ASCII.GetBytes(allUsers);
+                Byte[] msg = System.Text.Encoding.UTF8.GetBytes(allUsers);
 
                 networkStream.Write(msg, 0, msg.Length);
                 networkStream.Flush();
             }
             else if (dataFromClient.Contains("EDIT;"))
             {
+
                 string[] edit = dataFromClient.Split(';');
 
                 for (int a = 1; a < edit.Length; ++a)
@@ -144,6 +147,7 @@ namespace cca_p_mvvm_server
                 string[] channelMessage = dataFromClient.Split(';');
 
                 database.InsertChannelMessage(channelMessage);
+                networkStream.Flush();
             }
             else if (dataFromClient.Contains("GET_CHANNEL_MESSAGES;"))
             {
@@ -152,7 +156,7 @@ namespace cca_p_mvvm_server
                 string s = database.GetAllChannelMessages(channelID[1]);
                 Console.WriteLine(" >> " + s);
 
-                Byte[] msg = System.Text.Encoding.ASCII.GetBytes(database.GetAllChannelMessages(channelID[1]));
+                Byte[] msg = System.Text.Encoding.UTF8.GetBytes(database.GetAllChannelMessages(channelID[1]));
 
                 networkStream.Write(msg, 0, msg.Length);
                 networkStream.Flush();
@@ -196,7 +200,7 @@ namespace cca_p_mvvm_server
             }
             else
             {
-                sendBytes = System.Text.Encoding.ASCII.GetBytes(dataFromClient);
+                sendBytes = System.Text.Encoding.UTF8.GetBytes(dataFromClient);
 
                 networkStream.Write(sendBytes, 0, sendBytes.Length);
                 networkStream.Flush();

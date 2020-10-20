@@ -28,7 +28,6 @@ namespace cca_p_mvvm_server
 
                 Console.WriteLine(" >> " + "Client No:" + Convert.ToString(counter) + " started! \n");
                 HandleClient client = new HandleClient();
-
                 client.startClient(clientSocket, Convert.ToString(counter));
             }
 
@@ -38,4 +37,4 @@ namespace cca_p_mvvm_server
             Console.ReadLine();
         }
     }
-}
+}   

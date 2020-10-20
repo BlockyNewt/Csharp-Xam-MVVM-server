@@ -55,7 +55,14 @@ namespace cca_p_mvvm_server
 
                 rdr.Close();
 
-                return passwordIs;
+                if(passwordIs == string.Empty)
+                {
+                    return "EMPTY";
+                }
+                else
+                {
+                    return passwordIs;
+                }
             }
             catch (Exception e)
             {
@@ -100,13 +107,12 @@ namespace cca_p_mvvm_server
                 rdr.Close();
 
                 return userInfo;
-
             }
             catch (Exception e)
             {
                 Console.WriteLine(" >> " + e.ToString());
 
-                return string.Empty;
+                return "EMPTY";
             }
         }
 
@@ -194,6 +200,13 @@ namespace cca_p_mvvm_server
                 }
                 else
                 {
+                    //UTF8Encoding utf8 = new UTF8Encoding();
+                    //byte[] utf8Byte = utf8.GetBytes(allMessages);
+
+                    //string decode = utf8.GetString(utf8Byte);
+
+                    //Console.WriteLine("DECODE: " + decode);
+                    //allMessages = decode;
                     return allMessages;
                 }
             }
