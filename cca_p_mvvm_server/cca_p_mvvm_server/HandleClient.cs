@@ -12,32 +12,27 @@ namespace cca_p_mvvm_server
     public class HandleClient
     {
         TcpClient clientSocket;
-        string clNo;
         Database database;
+        int clientID;
 
-        public void startClient(TcpClient inClientSocket, string clineNo)
+        public void startClient(TcpClient inClientSocket)
         {
             database = new Database("test");
             database.ConnectToDatabase();
 
             this.clientSocket = inClientSocket;
-            this.clNo = clineNo;
             Thread ctThread = new Thread(doChat);
             ctThread.Start();
         }
         private void doChat()
         {
-            int requestCount = 0;
             byte[] bytesFrom = new byte[10025];
             string dataFromClient = null;
-            Byte[] sendBytes = null;
-            requestCount = 0;
 
             while ((true))
             {
                 try
                 {
-                    requestCount = requestCount + 1;
                     NetworkStream networkStream = clientSocket.GetStream();
 
                     //CHECKS TO SEE IF THE CLIENT DISCONNECTS
@@ -48,12 +43,13 @@ namespace cca_p_mvvm_server
 
                         Console.WriteLine(dataFromClient);
 
-                        ServerCommands(dataFromClient, networkStream, sendBytes);
+                        ServerCommands(dataFromClient, networkStream);
                     }
                     else
                     {
-
                         Console.Write(" >> Closing all connections.");
+
+                        this.database.ChangeLoggedValue(this.clientID, 0);
 
                         networkStream.Close();
                         this.clientSocket.Dispose();
@@ -75,7 +71,7 @@ namespace cca_p_mvvm_server
 
         }
 
-        private void ServerCommands(string dataFromClient, NetworkStream networkStream, Byte[] sendBytes)
+        private void ServerCommands(string dataFromClient, NetworkStream networkStream)
         {
             if (dataFromClient.Contains("USERNAME;"))
             {
@@ -98,6 +94,39 @@ namespace cca_p_mvvm_server
                 Byte[] msg = System.Text.Encoding.UTF8.GetBytes(getUserInfo);
                 networkStream.Write(msg, 0, msg.Length);
                 networkStream.Flush();
+            }
+            else if (dataFromClient.Contains("IS_LOGGED;"))
+            {
+                string[] words = dataFromClient.Split(';');
+                string getUserId = words[1];
+
+                int idConvert = Convert.ToInt32(getUserId);
+
+                this.clientID = idConvert;
+
+                string getLogged = this.database.CheckIfUserIsLogged(idConvert);
+
+                Byte[] msg = System.Text.Encoding.UTF8.GetBytes(getLogged);
+                networkStream.Write(msg, 0, msg.Length);
+                networkStream.Flush();
+            }
+            else if (dataFromClient.Contains("CHANGE_LOGGED_VALUE;"))
+            {
+                string[] words = dataFromClient.Split(';');
+                string getUserID = words[1];
+                string getNewLoggedValue = words[2];
+
+                int converUserId = Convert.ToInt32(getUserID);
+                int convertLoggedValue = Convert.ToInt32(getNewLoggedValue);
+
+                this.database.ChangeLoggedValue(converUserId, convertLoggedValue);
+            }
+            else if (dataFromClient.Contains("USER_ID;"))
+            {
+                string[] words = dataFromClient.Split(';');
+                string userID = words[1];
+
+                this.clientID = Convert.ToInt32(userID);
             }
             else if (dataFromClient.Contains("CREATE_ACCOUNT;"))    
             {
@@ -173,7 +202,7 @@ namespace cca_p_mvvm_server
 
                 Console.WriteLine(" >> " + s);
 
-                Byte[] msg = System.Text.Encoding.ASCII.GetBytes(database.GetAllDirectMessages(Convert.ToInt32(receiverID[1]), Convert.ToInt32(receiverID[2])));
+                Byte[] msg = System.Text.Encoding.UTF8.GetBytes(database.GetAllDirectMessages(Convert.ToInt32(receiverID[1]), Convert.ToInt32(receiverID[2])));
 
                 networkStream.Write(msg, 0, msg.Length);
                 networkStream.Flush();
@@ -200,9 +229,9 @@ namespace cca_p_mvvm_server
             }
             else
             {
-                sendBytes = System.Text.Encoding.UTF8.GetBytes(dataFromClient);
+                Byte[] msg = System.Text.Encoding.UTF8.GetBytes(dataFromClient);
 
-                networkStream.Write(sendBytes, 0, sendBytes.Length);
+                networkStream.Write(msg, 0, msg.Length);
                 networkStream.Flush();
             }
         }

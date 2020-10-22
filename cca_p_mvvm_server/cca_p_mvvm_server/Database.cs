@@ -116,6 +116,50 @@ namespace cca_p_mvvm_server
             }
         }
 
+        public string CheckIfUserIsLogged(int userID)
+        {
+            string query = "Select Logged_ from users where ID_ = " + userID + ";";
+
+            try
+            {
+                MySqlCommand sqlCommand = new MySqlCommand(query, this.conn_);
+                MySqlDataReader rdr = sqlCommand.ExecuteReader();
+                string isLogged = string.Empty;
+
+                while(rdr.Read())
+                {
+                    isLogged = rdr[0].ToString();
+                }
+
+                rdr.Close();
+
+                return isLogged;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(" >> " + e.ToString());
+
+                return "EMPTY";
+            }
+        }
+
+        public void ChangeLoggedValue(int userID,  int newValue)
+        {
+            string query = "Update users set Logged_ = " + newValue + " where ID_ = " + userID + ";";
+
+            try
+            {
+                MySqlCommand sqlCommand = new MySqlCommand(query, this.conn_);
+                MySqlDataReader rdr = sqlCommand.ExecuteReader();
+
+                rdr.Close();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(" >> " + e.ToString());
+            }
+        }
+
         public string GetChannels()
         {
             string query = "Select * from channels;";
@@ -306,6 +350,27 @@ namespace cca_p_mvvm_server
         public void CloseDatabaseConnection()
         {
             this.conn_.Close();
+        }
+
+        public bool ServerRestartOrBoot()
+        {
+            string query = "update users set Logged_ = " + 0 + " where Logged_ = " + 1 + ";";
+
+            try
+            {
+                MySqlCommand mySqlCommand = new MySqlCommand(query, this.conn_);
+                MySqlDataReader rdr = mySqlCommand.ExecuteReader();
+
+                rdr.Close();
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                Console.Write(" >> " + e.ToString());
+
+                return false;
+            }
         }
     }
 }

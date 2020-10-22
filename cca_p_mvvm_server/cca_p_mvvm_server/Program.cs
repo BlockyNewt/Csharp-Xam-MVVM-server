@@ -15,26 +15,37 @@ namespace cca_p_mvvm_server
         {
             TcpListener serverSocket = new TcpListener(IPAddress.Any, 45000);
             TcpClient clientSocket = default(TcpClient);
-            int counter = 0;
 
             serverSocket.Start();
             Console.WriteLine(" >> " + "Server Started \n");
 
-            counter = 0;
-            while (true)
+            Database database = new Database("test");
+
+            database.ConnectToDatabase();
+
+            if(database.ServerRestartOrBoot())
             {
-                counter += 1;
-                clientSocket = serverSocket.AcceptTcpClient();
+                database.CloseDatabaseConnection();
 
-                Console.WriteLine(" >> " + "Client No:" + Convert.ToString(counter) + " started! \n");
-                HandleClient client = new HandleClient();
-                client.startClient(clientSocket, Convert.ToString(counter));
+                while (true)
+                {
+                    clientSocket = serverSocket.AcceptTcpClient();
+
+                    HandleClient client = new HandleClient();
+                    client.startClient(clientSocket);
+                }
+
+                clientSocket.Close();
+                serverSocket.Stop();
+                Console.WriteLine(" >> " + "exit");
+                Console.ReadLine();
             }
+            else
+            {
+                Console.WriteLine(" >> Problem with ServerRestartOrBoot() function.");
 
-            clientSocket.Close();
-            serverSocket.Stop();
-            Console.WriteLine(" >> " + "exit");
-            Console.ReadLine();
+                Console.ReadLine();
+            }
         }
     }
 }   
