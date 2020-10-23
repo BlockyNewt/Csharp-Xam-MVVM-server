@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
@@ -41,7 +42,7 @@ namespace cca_p_mvvm_server
                         dataFromClient = System.Text.Encoding.UTF8.GetString(bytesFrom);
                         dataFromClient = dataFromClient.Substring(0, dataFromClient.IndexOf("$"));
 
-                        Console.WriteLine(dataFromClient);
+                        //Console.WriteLine(dataFromClient);
 
                         ServerCommands(dataFromClient, networkStream);
                     }
@@ -50,6 +51,8 @@ namespace cca_p_mvvm_server
                         Console.Write(" >> Closing all connections.");
 
                         this.database.ChangeLoggedValue(this.clientID, 0);
+
+                        this.database.CloseDatabaseConnection();
 
                         networkStream.Close();
                         this.clientSocket.Dispose();
@@ -107,6 +110,7 @@ namespace cca_p_mvvm_server
                 string getLogged = this.database.CheckIfUserIsLogged(idConvert);
 
                 Byte[] msg = System.Text.Encoding.UTF8.GetBytes(getLogged);
+
                 networkStream.Write(msg, 0, msg.Length);
                 networkStream.Flush();
             }
@@ -132,14 +136,24 @@ namespace cca_p_mvvm_server
             {
                 string[] words = dataFromClient.Split(';');
 
-                database.CreateAccount(words[1], words[2], words[3], words[4], words[5], words[6]);
+                database.CreateAccount(words[1], words[2], words[3], words[4], words[5], words[6], words[7]);
 
                 Console.WriteLine(" >> Created a new account.");
+            }
+            else if (dataFromClient.Contains("USERNAME_CHECK;"))
+            {
+                string[] words = dataFromClient.Split(';');
+
+                Byte[] msg = System.Text.Encoding.UTF8.GetBytes(database.CheckIfUsernameIsTaken(words[1]));
+
+                networkStream.Write(msg, 0, msg.Length);
+                networkStream.Flush();
             }
             else if (dataFromClient.Contains("CHANNELS;"))
             {
                 //GET ALL CHANNEL NAMES
                 string allChannels = database.GetChannels();
+
                 Byte[] msg = System.Text.Encoding.UTF8.GetBytes(allChannels);
 
                 //SEND TO CLIENT 
@@ -158,7 +172,6 @@ namespace cca_p_mvvm_server
             }
             else if (dataFromClient.Contains("EDIT;"))
             {
-
                 string[] edit = dataFromClient.Split(';');
 
                 for (int a = 1; a < edit.Length; ++a)
@@ -172,10 +185,10 @@ namespace cca_p_mvvm_server
             }
             else if (dataFromClient.Contains("CHANNEL_MESSAGE;"))
             {
-
                 string[] channelMessage = dataFromClient.Split(';');
 
                 database.InsertChannelMessage(channelMessage);
+
                 networkStream.Flush();
             }
             else if (dataFromClient.Contains("GET_CHANNEL_MESSAGES;"))
@@ -183,7 +196,8 @@ namespace cca_p_mvvm_server
                 string[] channelID = dataFromClient.Split(';');
 
                 string s = database.GetAllChannelMessages(channelID[1]);
-                Console.WriteLine(" >> " + s);
+
+                Console.WriteLine(" >> " + s + "\n");
 
                 Byte[] msg = System.Text.Encoding.UTF8.GetBytes(database.GetAllChannelMessages(channelID[1]));
 
@@ -192,15 +206,11 @@ namespace cca_p_mvvm_server
             }
             else if (dataFromClient.Contains("GET_DIRECT_MESSAGES;"))
             {
-                Console.WriteLine(" >> Direct " + dataFromClient + "\n");
-
                 string[] receiverID = dataFromClient.Split(';');
-
-                Console.WriteLine(" >> Sender ID: " + receiverID[1] + " Receiver ID: " + receiverID[2] + "\n");
 
                 string s = database.GetAllDirectMessages(Convert.ToInt32(receiverID[1]), Convert.ToInt32(receiverID[2]));
 
-                Console.WriteLine(" >> " + s);
+                Console.WriteLine(" >> " + s + "\n");
 
                 Byte[] msg = System.Text.Encoding.UTF8.GetBytes(database.GetAllDirectMessages(Convert.ToInt32(receiverID[1]), Convert.ToInt32(receiverID[2])));
 
@@ -225,7 +235,7 @@ namespace cca_p_mvvm_server
 
                 dataFromClient = string.Empty;
 
-                Console.WriteLine(" >> Inserting new channel message: " + dataFromClient);
+                Console.WriteLine(" >> " + dataFromClient);
             }
             else
             {

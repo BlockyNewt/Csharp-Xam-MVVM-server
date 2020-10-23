@@ -72,9 +72,9 @@ namespace cca_p_mvvm_server
             }
         }
 
-        public void CreateAccount(string firstname, string lastname, string username, string password, string bio, string profilePicture)
+        public void CreateAccount(string firstname, string lastname, string username, string password, string bio, string profilePicture, string logged)
         {
-            string query = "Insert into Users(First_Name_, Last_Name_, Username_, Password_, Bio_, Picture_) values( '" + firstname + "', '" + lastname + "', '" + username + "', '" + password + "', '" + bio + "', '" + profilePicture + "');";
+            string query = "Insert into Users(First_Name_, Last_Name_, Username_, Password_, Bio_, Picture_, Logged_) values( '" + firstname + "', '" + lastname + "', '" + username + "', '" + password + "', '" + bio + "', '" + profilePicture + "', " + Convert.ToInt32(logged) + ");";
 
             try
             {
@@ -86,6 +86,42 @@ namespace cca_p_mvvm_server
             catch (Exception e)
             {
                 Console.WriteLine(" >> " + e.ToString());
+            }
+        }
+
+        public string CheckIfUsernameIsTaken(string username)
+        {
+            string query = "select Username_ from users where Username_ = '" + username + "';";
+
+            try
+            {
+                MySqlCommand sqlCommand = new MySqlCommand(query, this.conn_);
+                MySqlDataReader rdr = sqlCommand.ExecuteReader();
+
+                string value = string.Empty;
+
+                while(rdr.Read())
+                {
+                    value = rdr[0].ToString();
+                }
+
+                rdr.Close();
+
+                if(value != username)
+                {
+                    value = username;
+                    return value;
+                }
+                else
+                {
+                    return "EMPTY";
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(" >> " + e.ToString());
+
+                return "EMPTY";
             }
         }
 
@@ -124,6 +160,7 @@ namespace cca_p_mvvm_server
             {
                 MySqlCommand sqlCommand = new MySqlCommand(query, this.conn_);
                 MySqlDataReader rdr = sqlCommand.ExecuteReader();
+
                 string isLogged = string.Empty;
 
                 while(rdr.Read())
@@ -132,6 +169,8 @@ namespace cca_p_mvvm_server
                 }
 
                 rdr.Close();
+
+                Console.WriteLine(" >> USER STATUS -> " + isLogged + "\n");
 
                 return isLogged;
             }
@@ -244,13 +283,6 @@ namespace cca_p_mvvm_server
                 }
                 else
                 {
-                    //UTF8Encoding utf8 = new UTF8Encoding();
-                    //byte[] utf8Byte = utf8.GetBytes(allMessages);
-
-                    //string decode = utf8.GetString(utf8Byte);
-
-                    //Console.WriteLine("DECODE: " + decode);
-                    //allMessages = decode;
                     return allMessages;
                 }
             }
@@ -349,6 +381,8 @@ namespace cca_p_mvvm_server
 
         public void CloseDatabaseConnection()
         {
+            Console.WriteLine(" >> Closing database connection \n");
+
             this.conn_.Close();
         }
 
