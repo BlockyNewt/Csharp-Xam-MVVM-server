@@ -48,7 +48,7 @@ namespace cca_p_mvvm_server
                     }
                     else
                     {
-                        Console.Write(" >> Closing all connections.");
+                        Console.WriteLine(" >> Closing all connections.");
 
                         this.database.ChangeLoggedValue(this.clientID, 0);
 
@@ -149,6 +149,15 @@ namespace cca_p_mvvm_server
                 networkStream.Write(msg, 0, msg.Length);
                 networkStream.Flush();
             }
+            else if (dataFromClient.Contains("EMAIL_CHECK;"))
+            {
+                string[] words = dataFromClient.Split(';');
+
+                Byte[] msg = System.Text.Encoding.UTF8.GetBytes(database.CheckIfEmailIsTaken(words[1]));
+
+                networkStream.Write(msg, 0, msg.Length);
+                networkStream.Flush();
+            }
             else if (dataFromClient.Contains("CHANNELS;"))
             {
                 //GET ALL CHANNEL NAMES
@@ -169,6 +178,36 @@ namespace cca_p_mvvm_server
 
                 networkStream.Write(msg, 0, msg.Length);
                 networkStream.Flush();
+            }
+            else if (dataFromClient.Contains("CHATS;"))
+            {
+                string[] words = dataFromClient.Split(';');
+
+                //GET ALL USERS ID, NAME, LASTNAME, AND PICTURE
+                string allUsers = database.GetAllChats(words[1]);
+
+                Console.WriteLine(" >> ALL USERS:" + allUsers + "\n");
+
+                Byte[] msg = System.Text.Encoding.UTF8.GetBytes(allUsers);
+
+                networkStream.Write(msg, 0, msg.Length);
+                networkStream.Flush();
+            }
+            else if (dataFromClient.Contains("ADD_CHAT;"))
+            {
+                string[] words = dataFromClient.Split(';');
+
+                this.database.AddNewChat(words);
+
+                Console.WriteLine(" >> Added new chat.");
+            }
+            else if (dataFromClient.Contains("REMOVE_CHAT;"))
+            {
+                string[] words = dataFromClient.Split(';');
+
+                this.database.RemoveChat(words[1]);
+
+                Console.WriteLine(" >> Removed chat.");
             }
             else if (dataFromClient.Contains("EDIT;"))
             {

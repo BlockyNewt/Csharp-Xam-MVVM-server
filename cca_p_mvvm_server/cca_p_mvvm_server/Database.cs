@@ -91,30 +91,106 @@ namespace cca_p_mvvm_server
 
         public string CheckIfUsernameIsTaken(string username)
         {
-            string query = "select Username_ from users where Username_ = '" + username + "';";
+            string query = "select Username_ from users where Username_ Like '%" + username + "%';";
 
             try
             {
                 MySqlCommand sqlCommand = new MySqlCommand(query, this.conn_);
                 MySqlDataReader rdr = sqlCommand.ExecuteReader();
 
-                string value = string.Empty;
+                string value = null;
 
                 while(rdr.Read())
                 {
-                    value = rdr[0].ToString();
+                    value += rdr[0].ToString() + ";";
                 }
 
                 rdr.Close();
 
-                if(value != username)
+                if(!string.IsNullOrEmpty(value))
                 {
-                    value = username;
-                    return value;
+                    string[] valueSplit = value.Split(';');
+
+                    for (int i = 0; i < valueSplit.Length; ++i)
+                    {
+                        if (valueSplit[i].ToLower() == username.ToLower())
+                        {
+                            value = "EMPTY";
+
+                            break;
+                        }
+                    }
+
+                    if (value == "EMPTY")
+                    {
+                        return value;
+                    }
+                    else
+                    {
+                        value = username;
+
+                        return value;
+                    }
                 }
                 else
                 {
-                    return "EMPTY";
+                    return "GOOD";
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(" >> " + e.ToString());
+
+                return "EMPTY";
+            }
+        }
+
+        public string CheckIfEmailIsTaken(string email)
+        {
+            string query = "Select Email_ from users where Email_ Like '%" + email + "%';";
+
+            try
+            {
+                MySqlCommand mySqlCommand = new MySqlCommand(query, this.conn_);
+                MySqlDataReader rdr = mySqlCommand.ExecuteReader();
+
+                string emailValue = string.Empty;
+
+                while(rdr.Read())
+                {
+                    emailValue += rdr[0].ToString() + ";";
+                }
+
+                rdr.Close();
+
+                if(!string.IsNullOrEmpty(emailValue))
+                {
+                    string[] emailValueSplit = emailValue.Split(';');
+
+                    for (int i = 0; i < emailValueSplit.Length; ++i)
+                    {
+                        if (emailValueSplit[i].ToLower() == email.ToLower())
+                        {
+                            emailValue = "EMPTY";
+
+                            break;
+                        }
+                    }
+
+                    if (emailValue == "EMPTY")
+                    {
+                        return "EMPTY";
+                    }
+                    else
+                    {
+                        emailValue = email;
+
+                        return emailValue;
+                    }
+                }
+                else
+                {
+                    return "GOOD";
                 }
             }
             catch (Exception e)
@@ -259,6 +335,44 @@ namespace cca_p_mvvm_server
             }
         }
 
+        public string GetAllChats(string clientID)
+        {
+            string query = "Select Target_ID_, Target_First_Name_, Target_Last_Name_, Target_Bio_, Target_Picture_ from user_Chats where Client_ID_ = " + Convert.ToInt32(clientID) + ";";
+
+            try
+            {
+                MySqlCommand sqlCommand = new MySqlCommand(query, this.conn_);
+                MySqlDataReader rdr = sqlCommand.ExecuteReader();
+
+                string allUsers = string.Empty;
+
+                while (rdr.Read())
+                {
+                    allUsers += rdr[0] + "," + rdr[1] + "," + rdr[2] + "," + rdr[3] + "," + rdr[4] + ";";
+                }
+
+                rdr.Close();
+
+                if(!string.IsNullOrEmpty(allUsers))
+                {
+                    Console.WriteLine(" >> " + allUsers + "\n");
+
+                    return allUsers;
+                }
+                else
+                {
+                    return "EMPTY";
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(" >> " + e.ToString());
+
+                return "EMPTY" ;
+            }
+        }
+
+
         public string GetAllChannelMessages(string channelID)
         {
             string query = "Select User_First_Name_, Message_ from Channel_Messages where Channel_ID_ = " + channelID + ";";
@@ -325,6 +439,40 @@ namespace cca_p_mvvm_server
             {
                 Console.WriteLine(" >> " + e.ToString());
                 return "EMPTY";
+            }
+        }
+
+        public void AddNewChat(string[] info)
+        {
+            string query = "Insert into user_chats(client_id_, target_id_, target_first_name_, target_last_name_, target_bio_, target_picture_) values(" + Convert.ToInt32(info[1]) + ", " + Convert.ToInt32(info[2]) + ", '" + info[3] + "', '" + info[4] + "', '" + info[5] + "', '" + info[6] + "');";
+
+            try
+            {
+                MySqlCommand mySqlCommand = new MySqlCommand(query, this.conn_);
+                MySqlDataReader rdr = mySqlCommand.ExecuteReader();
+
+                rdr.Close();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(" >> " + e.ToString());
+            }
+        }
+
+        public void RemoveChat(string targetID)
+        {
+            string query = "Delete from user_chats where Target_ID_ = " + Convert.ToInt32(targetID) + ";";
+
+            try
+            {
+                MySqlCommand mySqlCommand = new MySqlCommand(query, this.conn_);
+                MySqlDataReader rdr = mySqlCommand.ExecuteReader();
+
+                rdr.Close();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(" >> " + e.ToString());
             }
         }
 
